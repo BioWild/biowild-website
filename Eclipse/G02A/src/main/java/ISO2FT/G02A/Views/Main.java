@@ -296,7 +296,7 @@ public class Main {
 				try {
 					vd.updateOwner(tab3_license.getText(), tab3_newOwner.getText());
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
+					System.out.println("error");
 					e1.printStackTrace();
 				}
 			}

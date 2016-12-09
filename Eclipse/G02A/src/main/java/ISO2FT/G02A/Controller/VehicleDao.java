@@ -34,7 +34,7 @@ public class VehicleDao {
 		Statement stmt=(Statement) man.conn.createStatement();
 		ResultSet rs=stmt.executeQuery("SELECT id FROM `sanctionholder` WHERE `dni` = '"+ dni +"'");
 		rs.next();
-		ResultSet rs1=stmt.executeQuery("UPDATE `vehicle` SET `owner_id` = '" + rs.getRow() + "' WHERE `license` = '" + license + "'");
-		man.conn.commit();
+		stmt.executeUpdate("UPDATE `vehicle` SET `owner_id` = " + rs.getInt(1) + " WHERE `vehicle`.`license` = '" + license + "'");
+		System.out.println("changed");
 	}
 }

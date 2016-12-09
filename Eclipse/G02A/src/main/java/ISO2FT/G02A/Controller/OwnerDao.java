@@ -46,7 +46,7 @@ public class OwnerDao {
 		Statement stmt=(Statement) man.conn.createStatement();
 		ResultSet rs=stmt.executeQuery("SELECT owner_id FROM `vehicle` WHERE `license` = '" + license + "'");
 		if(rs.next()) {
-			ResultSet rs1=stmt.executeQuery("SELECT * FROM `sanctionholder` WHERE `id` = " + rs.getRow() + "");
+			ResultSet rs1=stmt.executeQuery("SELECT * FROM `sanctionholder` WHERE `id` = " + rs.getInt(1) + "");
 			rs1.next();
 			System.out.println(rs1.getString(5));
 			owner = new Owner(rs1.getString(2),rs1.getString(5),rs1.getString(4),rs1.getString(3));
