@@ -265,11 +265,13 @@ public class Main {
 						
 						ResultSet rs2 = stmt.executeQuery("SELECT * FROM `vehicle` ORDER BY RAND() LIMIT 1");
 						rs2.next();
+						String license_id = rs2.getString(1);
+						int owner_id = rs2.getInt(2);
 						stmt.executeUpdate("INSERT INTO `inquiry`(`id`, `dateOfIssue`, `location`, `maxSpeed`, `speed`, `owner_id`, `sanction_id`)"
 								+ "VALUES ( " + new_id + ", '" + LocalDate.now().toString() + "', '" + locations[rand_loc] + "', " + sp_limit[rand_max] 
-								+ " , " + random.nextInt(200) + "," + rs2.getInt(2) + ",NULL)");
-						stmt.executeUpdate("INSERT INTO `owner_inquiry`(`Owner_id`, `vehicles_id`, `inquiries_id`) VALUES (" + rs2.getInt(2) 
-								+ "," + rs2.getInt(1) + "," + new_id + ")");
+								+ " , " + random.nextInt(200) + "," + owner_id + ",NULL)");
+						stmt.executeUpdate("INSERT INTO `owner_inquiry`(`Owner_id`, `vehicles_id`, `inquiries_id`) VALUES (" + owner_id 
+								+ ",'" + license_id + "'," + new_id + ")");
 						JOptionPane.showMessageDialog(frame, "Inquiry ID: " + new_id);
 						
 					}
