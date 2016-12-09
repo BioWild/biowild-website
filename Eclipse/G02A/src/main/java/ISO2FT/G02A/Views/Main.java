@@ -24,7 +24,7 @@ public class Main {
 
 	private JFrame frame;
 	private JTextField tab3_license;
-	private JTextField textField_1;
+	private JTextField tab3_newOwner;
 	private JTextField tab2_inquiry_id;
 	private JTextField tab2_sanctionholder;
 	private JTextField tab1_sanction_id;
@@ -36,9 +36,9 @@ public class Main {
 	private JTextField textField_5;
 	private JTextField textField_6;
 	private JTextField tab3_currentOwner;
-	private JTextField textField_8;
-	private JTextField textField_9;
-	private JTextField textField_10;
+	private JTextField tab3_name;
+	private JTextField tab3_lastname;
+	private JTextField tab3_address;
 
 	/**
 	 * Launch the application.
@@ -206,10 +206,10 @@ public class Main {
 		panel3.add(tab3_license);
 		tab3_license.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(253, 196, 178, 19);
-		panel3.add(textField_1);
-		textField_1.setColumns(10);
+		tab3_newOwner = new JTextField();
+		tab3_newOwner.setBounds(253, 196, 178, 19);
+		panel3.add(tab3_newOwner);
+		tab3_newOwner.setColumns(10);
 		
 		JLabel lblLicensePlate = new JLabel("License plate");
 		lblLicensePlate.setBounds(98, 52, 95, 17);
@@ -220,6 +220,17 @@ public class Main {
 		panel3.add(lblNewOwner);
 		
 		JButton btnConfirmChange = new JButton("Confirm change");
+		btnConfirmChange.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				VehicleDao vd = new VehicleDao();
+				try {
+					vd.updateOwner(tab3_license.getText(), tab3_newOwner.getText());
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnConfirmChange.setBounds(253, 242, 196, 47);
 		panel3.add(btnConfirmChange);
 		
@@ -230,6 +241,9 @@ public class Main {
 				try {
 					Vehicle veh1 = vd.findByLicense(tab3_license.getText());
 					tab3_currentOwner.setText(veh1.getOwner().getDni());
+					tab3_name.setText(veh1.getOwner().getName());
+					tab3_lastname.setText(veh1.getOwner().getLastName());
+					tab3_address.setText(veh1.getOwner().getFullAddress());
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -249,23 +263,23 @@ public class Main {
 		lblCurrentOwner.setBounds(88, 86, 105, 15);
 		panel3.add(lblCurrentOwner);
 		
-		textField_8 = new JTextField();
-		textField_8.setEditable(false);
-		textField_8.setBounds(136, 127, 160, 19);
-		panel3.add(textField_8);
-		textField_8.setColumns(10);
+		tab3_name = new JTextField();
+		tab3_name.setEditable(false);
+		tab3_name.setBounds(136, 127, 160, 19);
+		panel3.add(tab3_name);
+		tab3_name.setColumns(10);
 		
-		textField_9 = new JTextField();
-		textField_9.setEditable(false);
-		textField_9.setBounds(414, 127, 179, 19);
-		panel3.add(textField_9);
-		textField_9.setColumns(10);
+		tab3_lastname = new JTextField();
+		tab3_lastname.setEditable(false);
+		tab3_lastname.setBounds(414, 127, 179, 19);
+		panel3.add(tab3_lastname);
+		tab3_lastname.setColumns(10);
 		
-		textField_10 = new JTextField();
-		textField_10.setEditable(false);
-		textField_10.setBounds(136, 158, 457, 19);
-		panel3.add(textField_10);
-		textField_10.setColumns(10);
+		tab3_address = new JTextField();
+		tab3_address.setEditable(false);
+		tab3_address.setBounds(136, 158, 457, 19);
+		panel3.add(tab3_address);
+		tab3_address.setColumns(10);
 		
 		JLabel lblAddress = new JLabel("Address");
 		lblAddress.setBounds(50, 160, 58, 15);

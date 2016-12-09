@@ -1,5 +1,6 @@
 package ISO2FT.G02A.Model;
 
+import java.sql.SQLException;
 import java.util.Date;
 
 import javax.persistence.CascadeType;
@@ -13,9 +14,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import edu.uclm.esi.iso2.multas.dao.DriverDao;
-import edu.uclm.esi.iso2.multas.dao.GeneralDao;
-import edu.uclm.esi.iso2.multas.dao.OwnerDao;
+import ISO2FT.G02A.Controller.DriverDao;
+import ISO2FT.G02A.Controller.GeneralDao;
+import ISO2FT.G02A.Controller.OwnerDao;
 
 @Entity
 @Table
@@ -40,7 +41,7 @@ public class Inquiry {
 		
 	}
 	
-	public Inquiry(String license, double speed, String location, double maxSpeed) {
+	public Inquiry(String license, double speed, String location, double maxSpeed) throws SQLException {
 		this();
 		this.dateOfIssue=new Date(System.currentTimeMillis());
 		this.speed=speed;
@@ -49,13 +50,14 @@ public class Inquiry {
 		this.owner=findOwner(license);
 	}
 
-	private Owner findOwner(String license) {
+	private Owner findOwner(String license) throws SQLException {
 		OwnerDao dao=new OwnerDao();
 		return dao.findByLicense(license);
 	}
 
 	public Sanction createSanctionFor(String dni) {
-		int points=calculatePoints();
+		return new Sanction();
+		/**int points=calculatePoints();
 		int amount=calculateAmount();
 		Sanction sanction=new Sanction();
 		DriverDao dao=new DriverDao();
@@ -65,7 +67,7 @@ public class Inquiry {
 		sanction.setAmount(amount);
 		GeneralDao<Sanction> daoSanction=new GeneralDao<>();
 		daoSanction.insert(sanction);
-		return sanction;
+		return sanction;*/
 	}
 
 	public int getId() {

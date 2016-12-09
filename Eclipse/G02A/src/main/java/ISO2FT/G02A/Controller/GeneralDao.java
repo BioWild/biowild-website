@@ -1,21 +1,17 @@
 package ISO2FT.G02A.Controller;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.Query;
-
 import java.util.List;
 
 public class GeneralDao<T> {
+	/*
     protected Session session;
     protected Transaction transaction;
-
+	 */
     public GeneralDao() {
     	// Si quitamos el comentario a la línea siguiente, la base de datos se vaciará.
         // HibernateFactory.buildIfNeeded();
     }
-
+    /*
     protected void startOperation() throws HibernateException {
         session = HibernateFactory.openSession();
         transaction = session.beginTransaction();
@@ -85,5 +81,5 @@ public class GeneralDao<T> {
             HibernateFactory.close(session);
         }
         return objects;
-    }
+    }*/
 }

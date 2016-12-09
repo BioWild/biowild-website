@@ -11,7 +11,7 @@ import ISO2FT.G02A.Model.Manager;
 import ISO2FT.G02A.Model.Vehicle;
 import ISO2FT.G02A.Model.Owner;
 
-public class VehicleDao extends GeneralDao<VehicleDao> {
+public class VehicleDao {
 	public VehicleDao() {
 		super();
 	}
@@ -28,5 +28,14 @@ public class VehicleDao extends GeneralDao<VehicleDao> {
 		}
 		man.conn.close();
         return vehicle;
+	}
+	
+	public void updateOwner(String license, String dni) throws SQLException {
+		Manager man = Manager.get();
+		Statement stmt=(Statement) man.conn.createStatement();
+		ResultSet rs=stmt.executeQuery("SELECT id FROM `sanctionholder` WHERE `dni` = '"+ dni +"'");
+		rs.next();
+		ResultSet rs1=stmt.executeQuery("UPDATE `vehicle` SET `owner_id` = '" + rs.getRow() + "' WHERE `license` = '" + license + "'");
+		man.conn.close();
 	}
 }
