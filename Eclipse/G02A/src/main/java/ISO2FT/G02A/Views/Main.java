@@ -21,12 +21,14 @@ import javax.swing.JTextField;
 import com.mysql.cj.api.jdbc.Statement;
 
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JButton;
 import java.awt.Component;
 import javax.swing.Box;
 import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -247,17 +249,28 @@ public class Main {
 			public void actionPerformed(ActionEvent e) {
 				Manager man = Manager.get();
 				Statement stmt;
-				int sp_limit[] = new int[]{30,40,60,70,80,90,100,110,120};
+				Random random = new Random();
+				int[] sp_limit = new int[]{30,40,60,70,80,90,100,110,120};
+				String[] locations = new String[]{"Manzanares","Ciudad Real", "Almagro","Miguelturra","Daimiel"};
+				
 				try {
 					stmt = (Statement) man.conn.createStatement();
-					for(int i = 0; i<10;i++) {
-						int o_id = ThreadLocalRandom.current().nextInt(1, 1000000 + 1);
-						int v_id = ThreadLocalRandom.current().nextInt(100, 1000000 + 1);
-						int i_id = ThreadLocalRandom.current().nextInt(100, 1000000 + 1);
+					for(int i = 0; i<3;i++) {
+						ResultSet rs_temp = stmt.executeQuery("SELECT MAX(ID) FROM `inquiry`");
+						rs_temp.next();
+						int new_id = rs_temp.getInt(1)+1;
+						int rand_loc = random.nextInt(locations.length);
+						int rand_max = random.nextInt(sp_limit.length);
 						int rnd = new Random().nextInt(sp_limit.length);
-						int sp_limit_v = sp_limit[rnd];
-						ResultSet rs = stmt.executeQuery("INSERT INTO `inquiry`(`id`, `dateOfIssue`, `location`, `maxSpeed`, `speed`, `owner_id`, `sanction_id`)"
-								+ "VALUES (,,,,,,)");
+						
+						ResultSet rs2 = stmt.executeQuery("SELECT * FROM `vehicle` ORDER BY RAND() LIMIT 1");
+						rs2.next();
+						stmt.executeUpdate("INSERT INTO `inquiry`(`id`, `dateOfIssue`, `location`, `maxSpeed`, `speed`, `owner_id`, `sanction_id`)"
+								+ "VALUES ( " + new_id + ", '" + LocalDate.now().toString() + "', '" + locations[rand_loc] + "', " + sp_limit[rand_max] 
+								+ " , " + random.nextInt(200) + "," + rs2.getInt(2) + ",NULL)");
+						stmt.executeUpdate("INSERT INTO `owner_inquiry`(`Owner_id`, `vehicles_id`, `inquiries_id`) VALUES (" + rs2.getInt(2) 
+								+ "," + rs2.getInt(1) + "," + new_id + ")");
+						JOptionPane.showMessageDialog(frame, "Inquiry ID: " + new_id);
 						
 					}
 				} catch (SQLException e1) {
