@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.awt.event.ActionEvent;
 
 public class Main {
@@ -36,7 +37,6 @@ public class Main {
 	private JFrame frame;
 	private JTextField tab3_license;
 	private JTextField tab3_newOwner;
-	private JTextField tab2_sanctionholder;
 	private JTextField tab1_inquiry;
 	private JTextField tab1_amount;
 	private JTextField tab1_date_of;
@@ -50,7 +50,7 @@ public class Main {
 	private JTextField tab3_lastname;
 	private JTextField tab3_address;
 	private JTextField tab2_date_of;
-	private JTextField textField_1;
+	private JTextField tab2_dni;
 	private JTextField tab2_maxsp;
 	private JTextField tab2_speed;
 	private JTextField tab2_points;
@@ -126,10 +126,20 @@ public class Main {
 		btnCreateSanction.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				InquiryDao id1 = new InquiryDao();
+				Manager man = Manager.get();
+				Statement stmt;
 				try {
+					stmt = (Statement) man.conn.createStatement();
+					ResultSet rs_temp = stmt.executeQuery("SELECT MAX(id) FROM `sanction`");
+					int new_id = rs_temp.getInt(1)+1;
 					Inquiry iq1 = id1.findByID(tab1_inquiry.getText());
-					OwnerDao od = new OwnerDao();
-					od.findByDni(tab1_dni.getText());
+					rs_temp = stmt.executeQuery("SELECT id FROM `sanctionholder` WHERE `dni` = " + tab1_dni.getText() + "");
+					rs_temp.next();
+					int dni = rs_temp.getInt(1);
+					stmt.executeUpdate("INSERT INTO `sanction`(`id`, `amount`, `dateOfPayment`, `dateOfReception`, `points`, `sanctionHolder_id`) "
+							+ "VALUES ("+ new_id +"," + Double.parseDouble(tab1_amount.getText()) + ", NULL, " + LocalDateTime.now()
+							+ ", " + Integer.parseInt(tab1_points.getText()) + ", " + dni + "");
+					stmt.executeUpdate("UPDATE `inquiry` SET `sanction_id` = " + new_id + " WHERE `id` = " + Integer.parseInt(tab1_inquiry.getText()) + "");
 					
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
@@ -189,6 +199,12 @@ public class Main {
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					tab1_date_of.setText("-");
+					tab1_location.setText("-");
+					tab1_maxsp.setText("-");
+					tab1_speed.setText("-");
+					tab1_points.setText("-");
+					tab1_amount.setText("-");
 				}
 			}
 		});
@@ -224,16 +240,28 @@ public class Main {
                 "Pay a sanction, it register the user if necesary");
 		panel2.setLayout(null);
 		
-		tab2_sanctionholder = new JTextField();
-		tab2_sanctionholder.setBounds(559, 214, 114, 19);
-		panel2.add(tab2_sanctionholder);
-		tab2_sanctionholder.setColumns(10);
-		
 		JLabel lblSanctionHolderdni = new JLabel("Sanction Holder (DNI)");
-		lblSanctionHolderdni.setBounds(79, 240, 151, 15);
+		lblSanctionHolderdni.setBounds(49, 142, 151, 15);
 		panel2.add(lblSanctionHolderdni);
 		
 		JButton btnPaySanction = new JButton("Pay sanction");
+		btnPaySanction.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InquiryDao iqd = new InquiryDao();
+				Manager man = Manager.get();
+				Statement stmt;
+				try {
+					stmt = (Statement) man.conn.createStatement();
+					ResultSet rs = stmt.executeQuery("SELECT `sanction_id` FROM `inquiry` WHERE `id` = " + Integer.parseInt(tab2_inquiry_id.getText()) + "");
+					rs.next();
+					int id = rs.getInt(1);
+					rs = stmt.executeQuery("UPDATE `sanction` SET `dateOfPayment` = " + LocalDate.now().toString() + " WHERE `id` = " + id + "");
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnPaySanction.setBounds(294, 221, 177, 52);
 		panel2.add(btnPaySanction);
 		
@@ -247,14 +275,10 @@ public class Main {
 		tab2_date_of.setBounds(112, 62, 180, 19);
 		panel2.add(tab2_date_of);
 		
-		JLabel label_1 = new JLabel("DNI");
-		label_1.setBounds(36, 113, 29, 15);
-		panel2.add(label_1);
-		
-		textField_1 = new JTextField();
-		textField_1.setColumns(10);
-		textField_1.setBounds(86, 111, 114, 19);
-		panel2.add(textField_1);
+		tab2_dni = new JTextField();
+		tab2_dni.setColumns(10);
+		tab2_dni.setBounds(86, 111, 114, 19);
+		panel2.add(tab2_dni);
 		
 		tab2_maxsp = new JTextField();
 		tab2_maxsp.setEditable(false);
@@ -318,6 +342,12 @@ public class Main {
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					tab2_date_of.setText("-");
+					tab2_location.setText("-");
+					tab2_maxsp.setText("-");
+					tab2_speed.setText("-");
+					tab2_points.setText("-");
+					tab2_amount.setText("-");
 				}
 			}
 		});
@@ -430,6 +460,10 @@ public class Main {
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
+					tab3_currentOwner.setText("-");
+					tab3_name.setText("-");
+					tab3_lastname.setText("-");
+					tab3_address.setText("-");
 				}
 			}
 		});
