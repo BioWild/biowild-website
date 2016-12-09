@@ -118,7 +118,7 @@ public class Inquiry {
 		this.maxSpeed = maxSpeed;
 	}
 
-	private int calculatePoints() {
+	public int calculatePoints() {
 		if (maxSpeed==30) {
 			if (speed>=31 && speed<=50) 
 				return 0;
@@ -204,7 +204,7 @@ public class Inquiry {
 		return 0;
 	}
 
-	private int calculateAmount() {
+	public int calculateAmount() {
 		if (maxSpeed==30) {
 			if (speed>=31 && speed<=50) 
 				return 100;

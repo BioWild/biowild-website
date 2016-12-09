@@ -25,8 +25,19 @@ public class OwnerDao {
 			owner = new Owner(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4));
 			
 		}
-		man.conn.close();
-        return owner;
+		return owner;
+	}
+	
+	public Owner findByID(int id) throws SQLException {
+		Owner owner = null;
+		Manager man = Manager.get();
+		Statement stmt=(Statement) man.conn.createStatement();
+		ResultSet rs=stmt.executeQuery("SELECT * FROM `sanctionholder` WHERE `id` = '" + id + "'");
+		if(rs.next()) {
+			owner = new Owner(rs.getString(1),rs.getString(2),rs.getString(3),rs.getString(4));
+			
+		}
+		return owner;
 	}
 	
 	public Owner findByLicense(String license) throws SQLException {
@@ -41,7 +52,6 @@ public class OwnerDao {
 			owner = new Owner(rs1.getString(2),rs1.getString(5),rs1.getString(4),rs1.getString(3));
 			System.out.println("a");
 		}
-		man.conn.close();
-        return owner;
+		return owner;
 	}
 }

@@ -26,7 +26,6 @@ public class VehicleDao {
 			OwnerDao od = new OwnerDao();
 			vehicle.setOwner(od.findByLicense(license));
 		}
-		man.conn.close();
         return vehicle;
 	}
 	
@@ -36,6 +35,6 @@ public class VehicleDao {
 		ResultSet rs=stmt.executeQuery("SELECT id FROM `sanctionholder` WHERE `dni` = '"+ dni +"'");
 		rs.next();
 		ResultSet rs1=stmt.executeQuery("UPDATE `vehicle` SET `owner_id` = '" + rs.getRow() + "' WHERE `license` = '" + license + "'");
-		man.conn.close();
+		man.conn.commit();
 	}
 }

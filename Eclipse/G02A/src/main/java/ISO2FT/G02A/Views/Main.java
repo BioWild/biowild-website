@@ -1,4 +1,6 @@
 package ISO2FT.G02A.Views;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import java.awt.EventQueue;
 
@@ -7,16 +9,23 @@ import javax.swing.JPanel;
 import java.awt.BorderLayout;
 import javax.swing.JTabbedPane;
 
+import ISO2FT.G02A.Controller.InquiryDao;
+import ISO2FT.G02A.Controller.OwnerDao;
 import ISO2FT.G02A.Controller.VehicleDao;
+import ISO2FT.G02A.Model.Inquiry;
 import ISO2FT.G02A.Model.Manager;
 import ISO2FT.G02A.Model.Vehicle;
 
 import javax.swing.JTextField;
+
+import com.mysql.cj.api.jdbc.Statement;
+
 import javax.swing.JLabel;
 import javax.swing.JButton;
 import java.awt.Component;
 import javax.swing.Box;
 import java.awt.event.ActionListener;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 
@@ -27,14 +36,14 @@ public class Main {
 	private JTextField tab3_newOwner;
 	private JTextField tab2_inquiry_id;
 	private JTextField tab2_sanctionholder;
-	private JTextField tab1_sanction_id;
+	private JTextField tab1_inquiry;
 	private JTextField tab1_amount;
 	private JTextField tab1_date_of;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
-	private JTextField textField_6;
+	private JTextField tab1_location;
+	private JTextField tab1_dni;
+	private JTextField tab1_maxsp;
+	private JTextField tab1_speed;
+	private JTextField tab1_points;
 	private JTextField tab3_currentOwner;
 	private JTextField tab3_name;
 	private JTextField tab3_lastname;
@@ -85,12 +94,13 @@ public class Main {
                 "Create a sanction over a  inquiry");
 		panel1.setLayout(null);
 		
-		tab1_sanction_id = new JTextField();
-		tab1_sanction_id.setBounds(112, 22, 139, 19);
-		panel1.add(tab1_sanction_id);
-		tab1_sanction_id.setColumns(10);
+		tab1_inquiry = new JTextField();
+		tab1_inquiry.setBounds(112, 22, 139, 19);
+		panel1.add(tab1_inquiry);
+		tab1_inquiry.setColumns(10);
 		
 		tab1_amount = new JTextField();
+		tab1_amount.setEditable(false);
 		tab1_amount.setBounds(619, 118, 70, 19);
 		panel1.add(tab1_amount);
 		tab1_amount.setColumns(10);
@@ -104,12 +114,26 @@ public class Main {
 		panel1.add(lblAmount);
 		
 		JButton btnCreateSanction = new JButton("Create sanction");
+		btnCreateSanction.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InquiryDao id1 = new InquiryDao();
+				try {
+					Inquiry iq1 = id1.findByID(tab1_inquiry.getText());
+					OwnerDao od = new OwnerDao();
+					od.findByDni(tab1_dni.getText());
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnCreateSanction.setBounds(280, 175, 172, 54);
 		panel1.add(btnCreateSanction);
 		
 		tab1_date_of = new JTextField();
 		tab1_date_of.setEditable(false);
-		tab1_date_of.setBounds(112, 69, 139, 19);
+		tab1_date_of.setBounds(100, 69, 180, 19);
 		panel1.add(tab1_date_of);
 		tab1_date_of.setColumns(10);
 		
@@ -117,36 +141,53 @@ public class Main {
 		lblDateOfIssue.setBounds(0, 71, 94, 15);
 		panel1.add(lblDateOfIssue);
 		
-		textField_2 = new JTextField();
-		textField_2.setEditable(false);
-		textField_2.setBounds(354, 69, 335, 19);
-		panel1.add(textField_2);
-		textField_2.setColumns(10);
+		tab1_location = new JTextField();
+		tab1_location.setEditable(false);
+		tab1_location.setBounds(354, 69, 335, 19);
+		panel1.add(tab1_location);
+		tab1_location.setColumns(10);
 		
-		textField_3 = new JTextField();
-		textField_3.setEditable(false);
-		textField_3.setBounds(74, 118, 114, 19);
-		panel1.add(textField_3);
-		textField_3.setColumns(10);
+		tab1_dni = new JTextField();
+		tab1_dni.setBounds(74, 118, 114, 19);
+		panel1.add(tab1_dni);
+		tab1_dni.setColumns(10);
 		
-		textField_4 = new JTextField();
-		textField_4.setEditable(false);
-		textField_4.setBounds(268, 118, 39, 19);
-		panel1.add(textField_4);
-		textField_4.setColumns(10);
+		tab1_maxsp = new JTextField();
+		tab1_maxsp.setEditable(false);
+		tab1_maxsp.setBounds(268, 118, 39, 19);
+		panel1.add(tab1_maxsp);
+		tab1_maxsp.setColumns(10);
 		
-		textField_5 = new JTextField();
-		textField_5.setEditable(false);
-		textField_5.setBounds(388, 118, 29, 19);
-		panel1.add(textField_5);
-		textField_5.setColumns(10);
+		tab1_speed = new JTextField();
+		tab1_speed.setEditable(false);
+		tab1_speed.setBounds(382, 118, 45, 19);
+		panel1.add(tab1_speed);
+		tab1_speed.setColumns(10);
 		
 		JButton btnCheckInquiryInfo = new JButton("Check inquiry info");
+		btnCheckInquiryInfo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				InquiryDao id1 = new InquiryDao();
+				try {
+					Inquiry iq1 = id1.findByID(tab1_inquiry.getText());
+					tab1_date_of.setText(iq1.getDateOfIssue().toString());
+					tab1_location.setText(iq1.getLocation());
+					tab1_maxsp.setText(String.valueOf(iq1.getMaxSpeed()));
+					tab1_speed.setText(String.valueOf(iq1.getSpeed()));
+					tab1_points.setText(String.valueOf(iq1.calculatePoints()));
+					tab1_amount.setText(String.valueOf(iq1.calculateAmount()));
+					
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
 		btnCheckInquiryInfo.setBounds(280, 19, 172, 25);
 		panel1.add(btnCheckInquiryInfo);
 		
 		JLabel lblLocation = new JLabel("Location");
-		lblLocation.setBounds(280, 71, 70, 15);
+		lblLocation.setBounds(292, 71, 61, 15);
 		panel1.add(lblLocation);
 		
 		JLabel lblDni = new JLabel("DNI");
@@ -165,11 +206,11 @@ public class Main {
 		lblPoints.setBounds(430, 120, 45, 15);
 		panel1.add(lblPoints);
 		
-		textField_6 = new JTextField();
-		textField_6.setEditable(false);
-		textField_6.setBounds(480, 118, 29, 19);
-		panel1.add(textField_6);
-		textField_6.setColumns(10);
+		tab1_points = new JTextField();
+		tab1_points.setEditable(false);
+		tab1_points.setBounds(480, 118, 29, 19);
+		panel1.add(tab1_points);
+		tab1_points.setColumns(10);
 		tabbedPane.addTab("Pay sanction", null, panel2,
                 "Pay a sanction, it register the user if necesary");
 		panel2.setLayout(null);
@@ -197,8 +238,37 @@ public class Main {
 		panel2.add(btnPaySanction);
 		tabbedPane.addTab("Change vehicle's owner", null, panel3,
                 "Change the owner from one person to other");
-		tabbedPane.addTab("Add/Check person", null, panel4,
-                "Check if a person exists and can create new people.");
+		tabbedPane.addTab("Radar", null, panel4,
+                "It enables the radar.");
+		panel4.setLayout(null);
+		
+		JButton btnRandomInquiries = new JButton("Random inquiries");
+		btnRandomInquiries.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Manager man = Manager.get();
+				Statement stmt;
+				int sp_limit[] = new int[]{30,40,60,70,80,90,100,110,120};
+				try {
+					stmt = (Statement) man.conn.createStatement();
+					for(int i = 0; i<10;i++) {
+						int o_id = ThreadLocalRandom.current().nextInt(1, 1000000 + 1);
+						int v_id = ThreadLocalRandom.current().nextInt(100, 1000000 + 1);
+						int i_id = ThreadLocalRandom.current().nextInt(100, 1000000 + 1);
+						int rnd = new Random().nextInt(sp_limit.length);
+						int sp_limit_v = sp_limit[rnd];
+						ResultSet rs = stmt.executeQuery("INSERT INTO `inquiry`(`id`, `dateOfIssue`, `location`, `maxSpeed`, `speed`, `owner_id`, `sanction_id`)"
+								+ "VALUES (,,,,,,)");
+						
+					}
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		btnRandomInquiries.setBounds(222, 138, 226, 78);
+		panel4.add(btnRandomInquiries);
 		panel3.setLayout(null);
 		
 		tab3_license = new JTextField();
